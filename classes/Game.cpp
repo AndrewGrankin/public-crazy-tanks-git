@@ -336,136 +336,137 @@ void Game::ArrangeGameField()
     m_statusBox.Add(tankStatusVO);
     m_armourIsPickedUp = false;
 
-    /* create nodes to calculate routes */
-    CreateNodesForRoutes();
+    /* Freezed draft functionality */
+    // /* create nodes to calculate routes */
+    // // CreateNodesForRoutes();
 
-    /* calculate routes */
-    // CalculateRoutes();
+    // /* calculate routes */
+    // // CalculateRoutes();
 
 }
 
-void Game::CreateNodesForRoutes()
-{
-    /* fill nodes array with nodeVO objects */
-    uint16_t coordX = m_p_MatrixActionRect->left;
-    uint16_t coordY = m_p_MatrixActionRect->top;
-    NodeVO* p_nodeVO;
+/* Freezed draft functionality */
+// void Game::CreateNodesForRoutes()
+// {
+//     /* fill nodes array with nodeVO objects */
+//     uint16_t coordX = m_p_MatrixActionRect->left;
+//     uint16_t coordY = m_p_MatrixActionRect->top;
+//     NodeVO* p_nodeVO;
 
-    for (int y = 0; y < NODES_HEIGHT; ++y)
-    {
-        for (int x = 0; x < NODES_WIDTH; ++x)
-        {
-            p_nodeVO = new NodeVO();
-            p_nodeVO->SetNodeNumber((y * NODES_WIDTH + x) + 1);   // we start nodes count from 1 for valid path building
-            p_nodeVO->SetNodeCoords(coordX, coordY);
+//     for (int y = 0; y < NODES_HEIGHT; ++y)
+//     {
+//         for (int x = 0; x < NODES_WIDTH; ++x)
+//         {
+//             p_nodeVO = new NodeVO();
+//             p_nodeVO->SetNodeNumber((y * NODES_WIDTH + x) + 1);   // we start nodes count from 1 for valid path building
+//             p_nodeVO->SetNodeCoords(coordX, coordY);
 
-            // check if node is near the wall
-            GameObject* p_testTank = new Tank(NPC, Utils::COLOR_BLUE);
-            p_testTank->SetDrawingStart(coordX, coordY);
-            GameObject* p_testObject = CheckObjectsOverlay(&m_objectsBox, p_testTank);
-            if (p_testObject != NULL)
-            {
-                if (p_testObject->GetTag() == WALL)
-                {
-                    p_nodeVO->SetAccess(false);
-                }
-                else
-                {
-                    p_nodeVO->SetAccess(true);
-                }
-            }
-            else
-            {
-                p_nodeVO->SetAccess(true);
-            }
-            delete p_testTank;
+//             // check if node is near the wall
+//             GameObject* p_testTank = new Tank(NPC, Utils::COLOR_BLUE);
+//             p_testTank->SetDrawingStart(coordX, coordY);
+//             GameObject* p_testObject = CheckObjectsOverlay(&m_objectsBox, p_testTank);
+//             if (p_testObject != NULL)
+//             {
+//                 if (p_testObject->GetTag() == WALL)
+//                 {
+//                     p_nodeVO->SetAccess(false);
+//                 }
+//                 else
+//                 {
+//                     p_nodeVO->SetAccess(true);
+//                 }
+//             }
+//             else
+//             {
+//                 p_nodeVO->SetAccess(true);
+//             }
+//             delete p_testTank;
 
-            p_nodeVO->SetColor(Utils::COLOR_WHITE);
-            m_nodesArray[y * NODES_WIDTH + x] = p_nodeVO;
+//             p_nodeVO->SetColor(Utils::COLOR_WHITE);
+//             m_nodesArray[y * NODES_WIDTH + x] = p_nodeVO;
 
-            coordX += Tank::STEP;
-        }
-        coordX = m_p_MatrixActionRect->left;
-        coordY += Tank::STEP;
-    }   
-}
+//             coordX += Tank::STEP;
+//         }
+//         coordX = m_p_MatrixActionRect->left;
+//         coordY += Tank::STEP;
+//     }   
+// }
 
-void Game::CalculateRoutes()
-{
-    // constructing the nodes adjacency matrix
-    for (uint16_t i = 0; i < NODES_NUMBER; ++i)
-    {
-        for (uint16_t j = 0; j < NODES_NUMBER; ++j)
-        {
-            if (i == j)
-            {
-                m_nodesAdjacencyMatrix[i * NODES_NUMBER + j] = 0;
-            }
-            else
-            {
-                NodeVO* p_i_Node = m_nodesArray[i];
-                NodeVO* p_j_Node = m_nodesArray[j];
-                if (p_i_Node->IsAccessible() && p_j_Node->IsAccessible())
-                {
+/* Freezed draft functionality */
+// void Game::CalculateRoutes()
+// {
+//     // constructing the nodes adjacency matrix
+//     for (uint16_t i = 0; i < NODES_NUMBER; ++i)
+//     {
+//         for (uint16_t j = 0; j < NODES_NUMBER; ++j)
+//         {
+//             if (i == j)
+//             {
+//                 m_nodesAdjacencyMatrix[i * NODES_NUMBER + j] = 0;
+//             }
+//             else
+//             {
+//                 NodeVO* p_i_Node = m_nodesArray[i];
+//                 NodeVO* p_j_Node = m_nodesArray[j];
+//                 if (p_i_Node->IsAccessible() && p_j_Node->IsAccessible())
+//                 {
                     
-                    uint16_t node_i_x = p_i_Node->GetNodeCoordX();
-                    uint16_t node_i_y = p_i_Node->GetNodeCoordY();
-                    uint16_t node_j_x = p_j_Node->GetNodeCoordX();
-                    uint16_t node_j_y = p_j_Node->GetNodeCoordY();
+//                     uint16_t node_i_x = p_i_Node->GetNodeCoordX();
+//                     uint16_t node_i_y = p_i_Node->GetNodeCoordY();
+//                     uint16_t node_j_x = p_j_Node->GetNodeCoordX();
+//                     uint16_t node_j_y = p_j_Node->GetNodeCoordY();
 
-                    if ( (abs(node_j_x - node_i_x) == Tank::STEP && node_j_y - node_i_y == 0) 
-                      || (abs(node_j_y - node_i_y) == Tank::STEP && node_j_x - node_i_x == 0) )
-                    {
-                        m_nodesAdjacencyMatrix[i * NODES_NUMBER + j] = 1;
-                    }
-                    else
-                    {
-                        m_nodesAdjacencyMatrix[i * NODES_NUMBER + j] = Utils::MAX_NUMBER;    
-                    }
-                }
-                else
-                {
-                    m_nodesAdjacencyMatrix[i * NODES_NUMBER + j] = Utils::MAX_NUMBER;
-                }
-            }
-        }
-    }
+//                     if ( (abs(node_j_x - node_i_x) == Tank::STEP && node_j_y - node_i_y == 0) 
+//                       || (abs(node_j_y - node_i_y) == Tank::STEP && node_j_x - node_i_x == 0) )
+//                     {
+//                         m_nodesAdjacencyMatrix[i * NODES_NUMBER + j] = 1;
+//                     }
+//                     else
+//                     {
+//                         m_nodesAdjacencyMatrix[i * NODES_NUMBER + j] = Utils::MAX_NUMBER;    
+//                     }
+//                 }
+//                 else
+//                 {
+//                     m_nodesAdjacencyMatrix[i * NODES_NUMBER + j] = Utils::MAX_NUMBER;
+//                 }
+//             }
+//         }
+//     }
 
-    // action Floyd algorithm
-    for (uint16_t k = 0; k < NODES_NUMBER; ++k)
-    {
-        for (uint16_t y = 0; y < NODES_NUMBER; ++y)
-        {
-            for (uint16_t x = 0; x < NODES_NUMBER; ++x)
-            {
-                uint16_t value_0 = m_nodesAdjacencyMatrix[y * NODES_NUMBER + x];
-                uint16_t value_1 = m_nodesAdjacencyMatrix[y * NODES_NUMBER + k];
-                uint16_t value_2 = m_nodesAdjacencyMatrix[k * NODES_NUMBER + x];
+//     // action Floyd algorithm
+//     for (uint16_t k = 0; k < NODES_NUMBER; ++k)
+//     {
+//         for (uint16_t y = 0; y < NODES_NUMBER; ++y)
+//         {
+//             for (uint16_t x = 0; x < NODES_NUMBER; ++x)
+//             {
+//                 uint16_t value_0 = m_nodesAdjacencyMatrix[y * NODES_NUMBER + x];
+//                 uint16_t value_1 = m_nodesAdjacencyMatrix[y * NODES_NUMBER + k];
+//                 uint16_t value_2 = m_nodesAdjacencyMatrix[k * NODES_NUMBER + x];
 
-                if (value_1 + value_2 < value_0)
-                {  
-                    m_nodesWeightMatrix[y * NODES_NUMBER + x] = value_1 + value_2;
-                    m_nodesPathMatrix[y * NODES_NUMBER + x] = k + 1;
-                }
-                else
-                {
-                    m_nodesWeightMatrix[y * NODES_NUMBER + x] = value_0;
-                }
-            }
-        }
+//                 if (value_1 + value_2 < value_0)
+//                 {  
+//                     m_nodesWeightMatrix[y * NODES_NUMBER + x] = value_1 + value_2;
+//                     m_nodesPathMatrix[y * NODES_NUMBER + x] = k + 1;
+//                 }
+//                 else
+//                 {
+//                     m_nodesWeightMatrix[y * NODES_NUMBER + x] = value_0;
+//                 }
+//             }
+//         }
 
-        // copy result matrix to source matrix
-        for (uint16_t y = 0; y < NODES_NUMBER; ++y)
-        {
-            for (uint16_t x = 0; x < NODES_NUMBER; ++x)
-            {
-                m_nodesAdjacencyMatrix[y * NODES_NUMBER + x] = m_nodesWeightMatrix[y * NODES_NUMBER + x];
-            }
-        }
-    }
-
-
-}
+//         // copy result matrix to source matrix
+//         for (uint16_t y = 0; y < NODES_NUMBER; ++y)
+//         {
+//             for (uint16_t x = 0; x < NODES_NUMBER; ++x)
+//             {
+//                 m_nodesAdjacencyMatrix[y * NODES_NUMBER + x] = m_nodesWeightMatrix[y * NODES_NUMBER + x];
+//             }
+//         }
+//     }
+// }
 
 void Game::ClearPixelMatrix()
 {
@@ -675,7 +676,7 @@ void Game::RestartGameRound()
     endGameRound = false;
     m_previousTimeSnapshot = std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count();
     m_timerMinutes = TIMER_MINUTES;
-    m_timerSeconds = m_timerMinutes * 60;
+    m_timerSeconds = m_timerMinutes * 60;    
     m_currentSeconds = 0;
 
     m_objectsBox.Clear();
@@ -685,81 +686,82 @@ void Game::RestartGameRound()
     ArrangeGameField();
 }
 
-void Game::Behave(Tank* aTank)
-{
-    if (aTank->GetEnemyObject() == NULL)
-    {
-        aTank->SetEnemyObject(&m_statusBox);
-    }
-    else if (aTank->GetEnemyObject()->GetStatus() == 0)
-    {
-        aTank->SetEnemyObject(&m_statusBox);
-    }
+/* Experimental functionality */
+// void Game::Behave(Tank* aTank)
+// {
+//     if (aTank->GetEnemyObject() == NULL)
+//     {
+//         aTank->SetEnemyObject(&m_statusBox);
+//     }
+//     else if (aTank->GetEnemyObject()->GetStatus() == 0)
+//     {
+//         aTank->SetEnemyObject(&m_statusBox);
+//     }
 
-    // выбрать танк для атаки
-    // начать сближение
-    // в радиусе атаки начать обстреливать
+//     // выбрать танк для атаки
+//     // начать сближение
+//     // в радиусе атаки начать обстреливать
 
-    int coordX = aTank->GetDrawingStart().x;
-    int coordY = aTank->GetDrawingStart().y;
-    int enemyCoordX = aTank->GetEnemyObject()->GetLocation().x;
-    int enemyCoordY = aTank->GetEnemyObject()->GetLocation().y;
+//     int coordX = aTank->GetDrawingStart().x;
+//     int coordY = aTank->GetDrawingStart().y;
+//     int enemyCoordX = aTank->GetEnemyObject()->GetLocation().x;
+//     int enemyCoordY = aTank->GetEnemyObject()->GetLocation().y;
 
-    // set random axis change every random path length
-    if (aTank->GetPathLength() == 0)
-    {
-        aTank->SetXAxisDirection(Utils::GetRandomFlag());
-        aTank->SetPathLength(Utils::GetRandomNumber(1, 10));
-    }
+//     // set random axis change every random path length
+//     if (aTank->GetPathLength() == 0)
+//     {
+//         aTank->SetXAxisDirection(Utils::GetRandomFlag());
+//         aTank->SetPathLength(Utils::GetRandomNumber(1, 10));
+//     }
 
-    bool isXAxisDirection = aTank->IsXAxisDirection();
-    switch (isXAxisDirection)
-    {
-        case true: 
-        {
-            if (coordX > enemyCoordX)
-            {
-                bool check = IsLegalMove(*aTank, LEFT);     
-                if (check)
-                {
-                    aTank->Move(LEFT);
-                }
-            }
-            else if (coordX < enemyCoordX)
-            {
-                bool check = IsLegalMove(*aTank, RIGHT);     
-                if (check)
-                {
-                    aTank->Move(RIGHT);
-                }
-            }
-            break;
-        }
-        case false: 
-        {
-            if (coordY > enemyCoordY)
-            {
-                bool check = IsLegalMove(*aTank, UP);     
-                if (check)
-                {
-                    aTank->Move(UP);
-                }
-            }
-            else if (coordY < enemyCoordY)
-            {
-                bool check = IsLegalMove(*aTank, DOWN);     
-                if (check)
-                {
-                    aTank->Move(DOWN);
-                }
-            }
-            break;
-        }
-    }
+//     bool isXAxisDirection = aTank->IsXAxisDirection();
+//     switch (isXAxisDirection)
+//     {
+//         case true: 
+//         {
+//             if (coordX > enemyCoordX)
+//             {
+//                 bool check = IsLegalMove(*aTank, LEFT);     
+//                 if (check)
+//                 {
+//                     aTank->Move(LEFT);
+//                 }
+//             }
+//             else if (coordX < enemyCoordX)
+//             {
+//                 bool check = IsLegalMove(*aTank, RIGHT);     
+//                 if (check)
+//                 {
+//                     aTank->Move(RIGHT);
+//                 }
+//             }
+//             break;
+//         }
+//         case false: 
+//         {
+//             if (coordY > enemyCoordY)
+//             {
+//                 bool check = IsLegalMove(*aTank, UP);     
+//                 if (check)
+//                 {
+//                     aTank->Move(UP);
+//                 }
+//             }
+//             else if (coordY < enemyCoordY)
+//             {
+//                 bool check = IsLegalMove(*aTank, DOWN);     
+//                 if (check)
+//                 {
+//                     aTank->Move(DOWN);
+//                 }
+//             }
+//             break;
+//         }
+//     }
 
-    // decrease the NPC's path lenght
-    aTank->DecreasePath();
-}
+//     // decrease the NPC's path lenght
+//     aTank->DecreasePath();
+// }
 
 void Game::Input()
 {
@@ -967,7 +969,7 @@ void Game::Logic()
         {
             Tank* p_newNPCTank = (Tank*)(p_item->GetCargo());
 
-
+            /* Experimental functionality*/    
             // Behave(p_newNPCTank);
             
             if (m_statusBox.Size() != 0)
@@ -975,83 +977,83 @@ void Game::Logic()
                 m_statusBox.GetElement(p_newNPCTank->GetIndex())->SetLocation(p_newNPCTank->GetDrawingStart().x, p_newNPCTank->GetDrawingStart().y);
             }
 
-            // // set random direction every random path length
-            // if (p_newNPCTank->GetPathLength() == 0)     
-            // {
-            //     p_newNPCTank->SetDirection(Utils::GetRandomDirection());
-            //     p_newNPCTank->SetPathLength(Utils::GetRandomNumber(1, 20));
-            // }
-            // eDirection dir = p_newNPCTank->GetDirection();
+            // set random direction every random path length
+            if (p_newNPCTank->GetPathLength() == 0)     
+            {
+                p_newNPCTank->SetDirection(Utils::GetRandomDirection());
+                p_newNPCTank->SetPathLength(Utils::GetRandomNumber(1, 20));
+            }
+            eDirection dir = p_newNPCTank->GetDirection();
 
-            // // check if NPC can move
-            // bool check = IsLegalMove(*p_newNPCTank, dir);     
-            // if (check)
-            // {
-            //     p_newNPCTank->Move(dir);
+            // check if NPC can move
+            bool check = IsLegalMove(*p_newNPCTank, dir);     
+            if (check)
+            {
+                p_newNPCTank->Move(dir);
 
-            //     // check if NPC hits health or armour icon
-            //     GameObject* p_overlayObject = CheckObjectsOverlay(&m_objectsBox, p_newNPCTank);
-            //     if (p_overlayObject != NULL)
-            //     {
-            //         // check if it is health
-            //         if (p_overlayObject->GetTag() == HEALTH_ICON)
-            //         {
-            //             // set zero status for correspoding status object
-            //             if (m_statusBox.Size() != 0)
-            //             {
-            //                 m_statusBox.GetElement(((HealthIcon*)p_overlayObject)->GetIndex())->SetStatus(0);
-            //                 m_statusBox.GetElement(((HealthIcon*)p_overlayObject)->GetIndex())->SetDeathTime(std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count());
-            //             }
+                // check if NPC hits health or armour icon
+                GameObject* p_overlayObject = CheckObjectsOverlay(&m_objectsBox, p_newNPCTank);
+                if (p_overlayObject != NULL)
+                {
+                    // check if it is health
+                    if (p_overlayObject->GetTag() == HEALTH_ICON)
+                    {
+                        // set zero status for correspoding status object
+                        if (m_statusBox.Size() != 0)
+                        {
+                            m_statusBox.GetElement(((HealthIcon*)p_overlayObject)->GetIndex())->SetStatus(0);
+                            m_statusBox.GetElement(((HealthIcon*)p_overlayObject)->GetIndex())->SetDeathTime(std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count());
+                        }
 
-            //             // mark health icon object to remove
-            //             m_objectsBox.MarkToRemove(p_overlayObject);
+                        // mark health icon object to remove
+                        m_objectsBox.MarkToRemove(p_overlayObject);
 
-            //             // calculate lifes delta: how many lifes we can add to NPC tank
-            //             int currentLifes = p_newNPCTank->GetLifesCount();
-            //             int lifesDelta = p_newNPCTank->GetMaxLifesCount() - currentLifes; 
-            //             p_newNPCTank->SetLifesCount(p_newNPCTank->GetLifesCount() + lifesDelta);
-            //         }
-            //         // else if it is armour
-            //         else if (p_overlayObject->GetTag() == ARMOUR_ICON)
-            //         {
-            //             int64_t currentTime = std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+                        // calculate lifes delta: how many lifes we can add to NPC tank
+                        int currentLifes = p_newNPCTank->GetLifesCount();
+                        int lifesDelta = p_newNPCTank->GetMaxLifesCount() - currentLifes; 
+                        p_newNPCTank->SetLifesCount(p_newNPCTank->GetLifesCount() + lifesDelta);
+                    }
+                    // else if it is armour
+                    else if (p_overlayObject->GetTag() == ARMOUR_ICON)
+                    {
+                        int64_t currentTime = std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count();
                         
-            //             // set zero status for correspoding status object
-            //             if (m_statusBox.Size() != 0)
-            //             {
-            //                 m_statusBox.GetElement(((ArmourIcon*)p_overlayObject)->GetIndex())->SetStatus(0);
-            //                 m_statusBox.GetElement(((ArmourIcon*)p_overlayObject)->GetIndex())->SetDeathTime(currentTime);
-            //             }
+                        // set zero status for correspoding status object
+                        if (m_statusBox.Size() != 0)
+                        {
+                            m_statusBox.GetElement(((ArmourIcon*)p_overlayObject)->GetIndex())->SetStatus(0);
+                            m_statusBox.GetElement(((ArmourIcon*)p_overlayObject)->GetIndex())->SetDeathTime(currentTime);
+                        }
 
-            //             // mark armour icon object to remove
-            //             m_objectsBox.MarkToRemove(p_overlayObject);
+                        // mark armour icon object to remove
+                        m_objectsBox.MarkToRemove(p_overlayObject);
 
-            //             // pick up armour
-            //             p_newNPCTank->PickUpArmour();
-            //             m_armourPickUpTime = currentTime;
-            //             m_armourIsPickedUp = true;
-            //         }
-            //     }
-            // }
+                        // pick up armour
+                        p_newNPCTank->PickUpArmour();
+                        m_armourPickUpTime = currentTime;
+                        m_armourIsPickedUp = true;
+                    }
+                }
+            }
 
-            // // decrease the NPC's path lenght
-            // p_newNPCTank->DecreasePath();
+            // decrease the NPC's path lenght
+            p_newNPCTank->DecreasePath();
 
-            // // if NPC can shoot
-            // if (p_newNPCTank->GetShootFlag() == true)
-            // {
-            //     // then shoot
-            //     p_newNPCTank->SetLastShootTime(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count());
-            //     GameObject* newBullet = new Bullet(BULLET, Utils::COLOR_YELLOW, p_newNPCTank->GetDirection());
-            //     POINT drawingStart = p_newNPCTank->GetShootingPosition(p_newNPCTank->GetDirection());
-            //     newBullet->SetDrawingStart(drawingStart.x, drawingStart.y);
-            //     ((Bullet*)newBullet)->BelongTo(NPC);
-            //     ((Bullet*)newBullet)->SetTankIndex(p_newNPCTank->GetIndex());
-            //     m_objectsBox.Add(newBullet);
-            // }
+            // if NPC can shoot
+            if (p_newNPCTank->GetShootFlag() == true)
+            {
+                // then shoot
+                p_newNPCTank->SetLastShootTime(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count());
+                GameObject* newBullet = new Bullet(BULLET, Utils::COLOR_YELLOW, p_newNPCTank->GetDirection());
+                POINT drawingStart = p_newNPCTank->GetShootingPosition(p_newNPCTank->GetDirection());
+                newBullet->SetDrawingStart(drawingStart.x, drawingStart.y);
+                ((Bullet*)newBullet)->BelongTo(NPC);
+                ((Bullet*)newBullet)->SetTankIndex(p_newNPCTank->GetIndex());
+                m_objectsBox.Add(newBullet);
+            }
 
-            // // wait for some time to be able shoot again
-            // ValidateShootFlag(p_newNPCTank, Utils::GetRandomNumber(500, 2000));
+            // wait for some time to be able shoot again
+            ValidateShootFlag(p_newNPCTank, Utils::GetRandomNumber(500, 2000));
 
             // animate something if any
             p_newNPCTank->Animate();
@@ -1247,73 +1249,75 @@ void Game::Logic()
     }
 }
 
-void Game::DrawLine(int startX, int startY, int endX, int endY, uint32_t lineColor)
-{
-      int lengthX = abs(endX - startX);
-      int lengthY = abs(endY - startY);
+/* ==== Test data for optimal routes. Should be deleted ==== */
+// void Game::DrawLine(int startX, int startY, int endX, int endY, uint32_t lineColor)
+// {
+//       int lengthX = abs(endX - startX);
+//       int lengthY = abs(endY - startY);
 
-      uint8_t* p_row;
-      uint32_t* p_pixel;
+//       uint8_t* p_row;
+//       uint32_t* p_pixel;
 
-       // draw start line point
-      p_row = (uint8_t*)m_p_bitmapMemory;
-      p_pixel = (uint32_t*)p_row;
-      p_pixel += startY * PMATRIX_WIDTH + startX;
-      *p_pixel = lineColor;   
+//        // draw start line point
+//       p_row = (uint8_t*)m_p_bitmapMemory;
+//       p_pixel = (uint32_t*)p_row;
+//       p_pixel += startY * PMATRIX_WIDTH + startX;
+//       *p_pixel = lineColor;   
 
-      if (lengthX > lengthY)
-      {
-            /* find coords for each X */
+//       if (lengthX > lengthY)
+//       {
+//             /* find coords for each X */
             
-            int trueStartX = startX;
-            int trueEndX = endX;
-            if (startX > endX)
-            {
-                  trueStartX = endX;
-                  trueEndX = startX;
-            }
+//             int trueStartX = startX;
+//             int trueEndX = endX;
+//             if (startX > endX)
+//             {
+//                   trueStartX = endX;
+//                   trueEndX = startX;
+//             }
                                                            
-            for (int x = trueStartX + 1; x < trueEndX; ++x)
-            {
-                  int y = startY + (x - startX) * (endY - startY) / (endX - startX);
+//             for (int x = trueStartX + 1; x < trueEndX; ++x)
+//             {
+//                   int y = startY + (x - startX) * (endY - startY) / (endX - startX);
 
-                  // draw line point
-                  p_row = (uint8_t*)m_p_bitmapMemory;
-                  p_pixel = (uint32_t*)p_row;
-                  p_pixel += y * PMATRIX_WIDTH + x;
-                  *p_pixel = lineColor; 
-            }     
-      }
-      else
-      {
-            /* find coords for each Y */
+//                   // draw line point
+//                   p_row = (uint8_t*)m_p_bitmapMemory;
+//                   p_pixel = (uint32_t*)p_row;
+//                   p_pixel += y * PMATRIX_WIDTH + x;
+//                   *p_pixel = lineColor; 
+//             }     
+//       }
+//       else
+//       {
+//             /* find coords for each Y */
 
-            int trueStartY = startY;
-            int trueEndY = endY;
-            if (startY > endY)
-            {
-                  trueStartY = endY;
-                  trueEndY = startY;
-            }
+//             int trueStartY = startY;
+//             int trueEndY = endY;
+//             if (startY > endY)
+//             {
+//                   trueStartY = endY;
+//                   trueEndY = startY;
+//             }
 
-            for (int y = trueStartY + 1; y < trueEndY; ++y)
-            {
-                  int x = startX + (endX - startX) * (y - startY) / (endY - startY);
+//             for (int y = trueStartY + 1; y < trueEndY; ++y)
+//             {
+//                   int x = startX + (endX - startX) * (y - startY) / (endY - startY);
 
-                  // draw line point
-                  p_row = (uint8_t*)m_p_bitmapMemory;
-                  p_pixel = (uint32_t*)p_row;
-                  p_pixel += y * PMATRIX_WIDTH + x;
-                  *p_pixel = lineColor; 
-            }
-      }
+//                   // draw line point
+//                   p_row = (uint8_t*)m_p_bitmapMemory;
+//                   p_pixel = (uint32_t*)p_row;
+//                   p_pixel += y * PMATRIX_WIDTH + x;
+//                   *p_pixel = lineColor; 
+//             }
+//       }
 
-      // draw end line point
-      p_row = (uint8_t*)m_p_bitmapMemory;
-      p_pixel = (uint32_t*)p_row;
-      p_pixel += endY * PMATRIX_WIDTH + endX;
-      *p_pixel = lineColor; 
-}
+//       // draw end line point
+//       p_row = (uint8_t*)m_p_bitmapMemory;
+//       p_pixel = (uint32_t*)p_row;
+//       p_pixel += endY * PMATRIX_WIDTH + endX;
+//       *p_pixel = lineColor; 
+// }
+/* =============================== */
 
 void Game::Draw()
 {
@@ -1420,55 +1424,53 @@ void Game::Draw()
         p_row += pitch;
     }
 
-    /* ==== Test data. Should be deleted ==== */
-    // fill the memory matrix with nodeVO objects
-    for (int y = 0; y < NODES_HEIGHT; ++y)
-    {
-        for (int x = 0; x < NODES_WIDTH; ++x)
-        {
-            NodeVO* p_checkNode = m_nodesArray[y * NODES_WIDTH + x];
+    /* ==== Test data for optimal routes. Should be deleted ==== */
+    // // fill the memory matrix with nodeVO objects
+    // for (int y = 0; y < NODES_HEIGHT; ++y)
+    // {
+    //     for (int x = 0; x < NODES_WIDTH; ++x)
+    //     {
+    //         NodeVO* p_checkNode = m_nodesArray[y * NODES_WIDTH + x];
             
-            int rect_x = p_checkNode->GetNodeCoordX();
-            int rect_y = p_checkNode->GetNodeCoordY();
-            int rect_width = 2;
-            int rect_height = 2;
-            uint32_t rect_color = p_checkNode->GetColor();
+    //         int rect_x = p_checkNode->GetNodeCoordX();
+    //         int rect_y = p_checkNode->GetNodeCoordY();
+    //         int rect_width = 2;
+    //         int rect_height = 2;
+    //         uint32_t rect_color = p_checkNode->GetColor();
 
-            p_row = (uint8_t*)m_p_bitmapMemory; 
-            p_row += (pitch * rect_y);
-            for (int i = rect_y; i < rect_height + rect_y; ++i)
-            {
-                uint32_t* p_pixel = (uint32_t*)p_row;
-                p_pixel += rect_x;
-                for (int j = rect_x; j < rect_width + rect_x; ++j)
-                {	
-                    *p_pixel = rect_color;
-                    ++p_pixel;
-                }
-                p_row += pitch;
-            }
-        }
-    } 
+    //         p_row = (uint8_t*)m_p_bitmapMemory; 
+    //         p_row += (pitch * rect_y);
+    //         for (int i = rect_y; i < rect_height + rect_y; ++i)
+    //         {
+    //             uint32_t* p_pixel = (uint32_t*)p_row;
+    //             p_pixel += rect_x;
+    //             for (int j = rect_x; j < rect_width + rect_x; ++j)
+    //             {	
+    //                 *p_pixel = rect_color;
+    //                 ++p_pixel;
+    //             }
+    //             p_row += pitch;
+    //         }
+    //     }
+    // } 
 
-    // draw lines for connected nodes
-    for (uint16_t i = 0; i < NODES_NUMBER; ++i)
-    {
-        for (uint16_t j = 0; j < NODES_NUMBER; ++j)
-        {   
-            if (m_nodesAdjacencyMatrix[i * NODES_NUMBER + j] == 1)
-            {
-                NodeVO* p_i_Node = m_nodesArray[i];
-                NodeVO* p_j_Node = m_nodesArray[j];
-                uint16_t node_i_x = p_i_Node->GetNodeCoordX();
-                uint16_t node_i_y = p_i_Node->GetNodeCoordY();
-                uint16_t node_j_x = p_j_Node->GetNodeCoordX();
-                uint16_t node_j_y = p_j_Node->GetNodeCoordY();
-                DrawLine(node_i_x, node_i_y, node_j_x, node_j_y, 0x00ffffff);
-            }
-        }
-    }
-
-
+    // // draw lines for connected nodes
+    // for (uint16_t i = 0; i < NODES_NUMBER; ++i)
+    // {
+    //     for (uint16_t j = 0; j < NODES_NUMBER; ++j)
+    //     {   
+    //         if (m_nodesAdjacencyMatrix[i * NODES_NUMBER + j] == 1)
+    //         {
+    //             NodeVO* p_i_Node = m_nodesArray[i];
+    //             NodeVO* p_j_Node = m_nodesArray[j];
+    //             uint16_t node_i_x = p_i_Node->GetNodeCoordX();
+    //             uint16_t node_i_y = p_i_Node->GetNodeCoordY();
+    //             uint16_t node_j_x = p_j_Node->GetNodeCoordX();
+    //             uint16_t node_j_y = p_j_Node->GetNodeCoordY();
+    //             DrawLine(node_i_x, node_i_y, node_j_x, node_j_y, 0x00ffffff);
+    //         }
+    //     }
+    // }
     /* ==== Test data. End ==== */
 
     
@@ -1516,24 +1518,26 @@ void Game::Draw()
                 SRCCOPY
                 );
 
+    // create custorm font for time and score strings
     hFont = (HFONT)GetStockObject(SYSTEM_FIXED_FONT);
     SelectObject(deviceContext, hFont); 
     TextOut(deviceContext, 290, 55, GetTimeString().c_str(), GetTimeString().size());
     TextOut(deviceContext, 290, 70, GetScoreString().c_str(), GetScoreString().size());
+    DeleteObject(hFont);
 
     // create custom font for armour info
     hFont = CreateFont(40,0,0,0,FW_DONTCARE,FALSE,FALSE,FALSE,DEFAULT_CHARSET,OUT_OUTLINE_PRECIS,CLIP_DEFAULT_PRECIS,CLEARTYPE_QUALITY, VARIABLE_PITCH,TEXT("Impact"));
     SelectObject(deviceContext, hFont);
-    TextOut(deviceContext, 190, 50, GetArmourInfoString().c_str(), GetArmourInfoString().size());
+    TextOut(deviceContext, 130, 50, GetArmourInfoString().c_str(), GetArmourInfoString().size());
     DeleteObject(hFont);
 
-    // create custom font
-    hFont = CreateFont(24,0,0,0,FW_DONTCARE,FALSE,FALSE,FALSE,DEFAULT_CHARSET,OUT_OUTLINE_PRECIS,CLIP_DEFAULT_PRECIS,CLEARTYPE_QUALITY, VARIABLE_PITCH,TEXT("Impact"));
+    // create custom font for score table
+    hFont = CreateFont(20,0,0,0,FW_DONTCARE,FALSE,FALSE,FALSE,DEFAULT_CHARSET,OUT_OUTLINE_PRECIS,CLIP_DEFAULT_PRECIS,CLEARTYPE_QUALITY, VARIABLE_PITCH,TEXT("Impact"));
     SelectObject(deviceContext, hFont);
 
     // score info output into the table
     int coordY = 110;
-    //if (endGameRound)
+    if (endGameRound)
     {
         for (int i = 0; i < m_statusBox.Size(); ++i)
         {
@@ -1541,21 +1545,22 @@ void Game::Draw()
             if (tag != HEALTH_ICON && tag != ARMOUR_ICON)
             {
                 std::string info = m_statusBox.GetElement(i)->GetStatusInfo(i);
-                TextOut(deviceContext, 500, coordY, info.c_str(), info.size());
-                coordY += 24; 
+                TextOut(deviceContext, 70, coordY, info.c_str(), info.size());
+                coordY += 20; 
             }
         }
 
         // restart info
-        TextOut(deviceContext, 500, coordY += 15, TEXT(" Press 'R' to restart the game.  "), strlen(" Press 'R' to restart the game.  "));
-        TextOut(deviceContext, 500, coordY += 24, TEXT(" Press 'ESC' to go to the menu. "), strlen(" Press 'ESC' to go to the menu. "));
+        TextOut(deviceContext, 100, coordY += 3, TEXT(" Press 'R' to restart the game.  "), strlen(" Press 'R' to restart the game.  "));
+        TextOut(deviceContext, 100, coordY += 20, TEXT(" Press 'ESC' to go to the menu. "), strlen(" Press 'ESC' to go to the menu. "));
     }
+    DeleteObject(hFont);
 
     // hFont = (HFONT)GetStockObject(SYSTEM_FIXED_FONT);
     // SelectObject(deviceContext, hFont); 
     // TextOut(deviceContext, 20, 40, GetOutputString1().c_str(), GetOutputString1().size());
 
-    DeleteObject(hFont);
+    
     ReleaseDC(*m_p_consoleWindow, deviceContext);
 
 }
@@ -1646,7 +1651,7 @@ void Game::OutputArmourInfo()
         int64_t currentTime = std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count();
         int64_t delta = currentTime - m_armourPickUpTime;
         int seconds = Tank::ARMOUR_DURATION_TIME - (int)delta;
-        ss << "AR: " << seconds;
+        ss << "ARMOUR: " << seconds;
 
         if (seconds <= 0)
         {

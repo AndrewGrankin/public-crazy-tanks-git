@@ -41,7 +41,7 @@ int ShowControls()
     cout << "  =========" << endl;
     cout << "    Arrows - movement UP/DOWN/LEFT/RIGHT" << endl;
     cout << "     Space - shooting" << endl;
-    cout << "         P - pause" << endl;
+    // cout << "         P - pause" << endl;
     cout << "       ESC - go to menu" << endl;
     cout << endl;
     cout << "   Option '1' to go back" << endl;

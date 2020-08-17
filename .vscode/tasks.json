@@ -1,0 +1,79 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Build_Debug_Crazy_Tanks",
+            "type": "shell",
+            "command": "cl",
+            "args": [
+                "/MDd",
+                "/W4",
+                "/EHsc",
+                "/Zi",
+
+                /* For TEST builds*/
+                // "gdi32.lib",
+                // "User32.lib",
+                // "/Fe:${workspaceFolder}\\C++\\CrazyTanks\\test\\RoutesGraphicTest\\RoutesGraphicTest.exe",
+                // "/Fd:${workspaceFolder}\\C++\\CrazyTanks\\test\\RoutesGraphicTest\\", 
+                // "/Fo:${workspaceFolder}\\C++\\CrazyTanks\\test\\RoutesGraphicTest\\",
+                // "/I${workspaceFolder}\\C++\\CrazyTanks\\headers",
+                // "${workspaceFolder}\\C++\\CrazyTanks\\test\\RoutesGraphicTest\\RoutesGraphicTest.cpp"
+
+                "gdi32.lib",
+                "User32.lib",
+                "/Fe:${workspaceFolder}/builds/debug/CrazyTanks.exe",
+                "/Fd:${workspaceFolder}/builds/debug/", 
+                "/Fo:${workspaceFolder}/builds/debug/",
+                "/I${workspaceFolder}/headers/",
+                "${workspaceFolder}/CrazyTanks.cpp",
+                "${workspaceFolder}/classes/Tank.cpp",
+                "${workspaceFolder}/classes/Bullet.cpp",
+                "${workspaceFolder}/classes/ExplosionEffect.cpp",
+                "${workspaceFolder}/classes/Icon.cpp",
+                "${workspaceFolder}/classes/HealthIcon.cpp",
+                "${workspaceFolder}/classes/ArmourIcon.cpp",
+                "${workspaceFolder}/classes/Brick.cpp",
+                "${workspaceFolder}/classes/Wall.cpp",
+                "${workspaceFolder}/classes/Game.cpp",
+                "${workspaceFolder}/classes/Utils.cpp",
+                "${workspaceFolder}/classes/GameObject.cpp",
+            ],
+            // "command": "g++ -static -g .\\C++\\CrazyTanks\\CrazyTanks.cpp .\\C++\\CrazyTanks\\classes\\Tank.cpp .\\C++\\CrazyTanks\\classes\\Bullet.cpp .\\C++\\CrazyTanks\\classes\\Game.cpp .\\C++\\CrazyTanks\\classes\\Utils.cpp .\\C++\\CrazyTanks\\classes\\GameObject.cpp -I .\\C++\\CrazyTanks\\headers\\ -o .\\C++\\CrazyTanks\\builds\\CrazyTanks -lgdi32",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "Build_Release_Crazy_Tanks",
+            "type": "shell",
+            "command": "cl",
+            "args": [
+                "/W4",      // warning level 4
+                "/EHsc",    // exception handling model
+                "/MT",      // compiles to create a multithreaded executable file, by using LIBCMT.lib.
+                "gdi32.lib",
+                "User32.lib",
+                "/Fe:${workspaceFolder}/builds/release/CrazyTanks.exe",
+                "/Fd:${workspaceFolder}/builds/release/", 
+                "/Fo:${workspaceFolder}/builds/release/",
+                "/I${workspaceFolder}/headers/",
+                "${workspaceFolder}/CrazyTanks.cpp",
+                "${workspaceFolder}/classes/Tank.cpp",
+                "${workspaceFolder}/classes/Bullet.cpp",
+                "${workspaceFolder}/classes/ExplosionEffect.cpp",
+                "${workspaceFolder}/classes/Icon.cpp",
+                "${workspaceFolder}/classes/HealthIcon.cpp",
+                "${workspaceFolder}/classes/ArmourIcon.cpp",
+                "${workspaceFolder}/classes/Brick.cpp",
+                "${workspaceFolder}/classes/Wall.cpp",
+                "${workspaceFolder}/classes/Game.cpp",
+                "${workspaceFolder}/classes/Utils.cpp",
+                "${workspaceFolder}/classes/GameObject.cpp",
+            ]
+        }
+    ]
+}

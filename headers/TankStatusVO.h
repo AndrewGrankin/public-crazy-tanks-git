@@ -40,11 +40,12 @@ class TankStatusVO
 
             switch (m_tag)
             {
-                case PLAYER: { ss << "  PLAYER" << "   - - - - - - - - - - - - - - - "; break; }
-                case NPC: { ss << "   TANK_" << index << " - - - - - - - - - - - - - - - "; break; }
+                case PLAYER: { ss << "  PLAYER" << "   - - - - - - - - - - - - - - - - - - - - - - - - "; break; }
+                case NPC: { ss << "   TANK_" << index << " - - - - - - - - - - - - - - - - - - - - - - - - "; break; }
             }
 
-            ss << "X: " << m_location.x << " Y: " << m_location.y << "   " << m_score << "  ";
+            // ss << "X: " << m_location.x << " Y: " << m_location.y << "   " << m_score << "  ";  // for test purposes
+            ss << m_score << "  ";
             m_statusInfo = ss.str();
             return m_statusInfo;
         }

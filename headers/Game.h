@@ -23,7 +23,7 @@
 #include <TankStatusVO.h>
 #include <Box.h>
 #include <ExplosionEffect.h>
-#include <NodeVO.h>
+// #include <NodeVO.h>     /* Test data for optimal routes. Should be deleted */
 
 class Game 
 {
@@ -62,9 +62,12 @@ class Game
         static const int NPC_COUNT = 10;
         static const int WALL_COUNT = 20;
         static const int TIMER_MINUTES = 1;
-        static const int NODES_WIDTH = (PMATRIX_ACTION_RECT_WIDTH - Utils::TANK_PATTERN_WIDTH + Tank::STEP) / Tank::STEP;
-        static const int NODES_HEIGHT = (PMATRIX_ACTION_RECT_HEIGHT - Utils::TANK_PATTERN_HEIGHT + Tank::STEP) / Tank::STEP;
-        static const int NODES_NUMBER = NODES_WIDTH * NODES_HEIGHT;
+
+        /* ==== Test data for optimal routes. Should be deleted ==== */
+        // static const int NODES_WIDTH = (PMATRIX_ACTION_RECT_WIDTH - Utils::TANK_PATTERN_WIDTH + Tank::STEP) / Tank::STEP;
+        // static const int NODES_HEIGHT = (PMATRIX_ACTION_RECT_HEIGHT - Utils::TANK_PATTERN_HEIGHT + Tank::STEP) / Tank::STEP;
+        // static const int NODES_NUMBER = NODES_WIDTH * NODES_HEIGHT;
+        /* ==================== */
 
         int m_timerMinutes;
         int m_timerSeconds;
@@ -86,10 +89,14 @@ class Game
         std::string m_outputString0;
         std::string m_outputString1;
         std::array<int, NPC_COUNT> m_tanksList;
-        std::array<NodeVO*, NODES_NUMBER> m_nodesArray;
-        std::array<uint16_t, NODES_NUMBER * NODES_NUMBER> m_nodesAdjacencyMatrix;
-        std::array<uint16_t, NODES_NUMBER * NODES_NUMBER> m_nodesWeightMatrix;
-        std::array<uint16_t, NODES_NUMBER * NODES_NUMBER> m_nodesPathMatrix;
+
+        /* ==== Test data for optimal routes. Should be deleted ==== */
+        // std::array<NodeVO*, NODES_NUMBER> m_nodesArray;
+        // std::array<uint16_t, NODES_NUMBER * NODES_NUMBER> m_nodesAdjacencyMatrix;
+        // std::array<uint16_t, NODES_NUMBER * NODES_NUMBER> m_nodesWeightMatrix;
+        // std::array<uint16_t, NODES_NUMBER * NODES_NUMBER> m_nodesPathMatrix;
+        /* ==================== */
+
         Box<GameObject> m_objectsBox;
         Box<TankStatusVO> m_statusBox;
 
@@ -101,8 +108,8 @@ class Game
         // void CreateTankSpawnGroup(Tank* tank, bool tankPosFixed);        /* Freezed draft functionality*/ // surrounds input tank with walls and adds it to the objects box
         void SpawnGameObject(eTag tag, int index, int seconds);
         void ArrangeGameField();
-        void CreateNodesForRoutes();
-        void CalculateRoutes();
+        // void CreateNodesForRoutes();                                     /* Freezed draft functionality */ creates nodes to calculater optimal routes
+        // void CalculateRoutes();                                          /* Freezed draft functionality */ calculate optimal routes using Floyd's algorithm
         bool InsideActionRect(GameObject* gameObject);                                      // check if object within the action rectangle border
         // bool CheckObjectsOverlay(Box<GameObject>* list, RECT* rect);     /* Freezed draft functionality*/ // check if object overlays with tested rectangle
         GameObject* CheckObjectsOverlay(Box<GameObject>* list, GameObject* gameObject);     // check if object overlays with other objects in the box
@@ -111,8 +118,10 @@ class Game
         void CheckIfGameRoundEnded();
         void RestartGameRound();
 
-        // TEST. TO DELETE: drawing functions
-        void DrawLine(int startX, int startY, int endX, int endY, uint32_t lineColor);
+        /* ==== Test data for optimal routes. Should be deleted ==== */
+        // // TEST. TO DELETE: drawing functions
+        // void DrawLine(int startX, int startY, int endX, int endY, uint32_t lineColor);
+        /* ========================================== */
 
         // little AI function
         void Behave(Tank* aTank);
