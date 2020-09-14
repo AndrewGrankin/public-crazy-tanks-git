@@ -75,7 +75,7 @@ class Game
         int64_t m_previousTimeSnapshot;     // is used for countdown
         int64_t m_armourPickUpTime;          // holds the time when armour is picked up by anyone
         
-        int pixelMatrix[PMATRIX_WIDTH * PMATRIX_HEIGHT];
+        int mainDigitalMatrix[PMATRIX_WIDTH * PMATRIX_HEIGHT];
         RECT* m_p_MatrixActionRect;
         bool endGame;
         bool endGameRound;
@@ -103,8 +103,8 @@ class Game
     private: 
         Game();
 
-        void ClearPixelMatrix();
-        void ResetPixelMatrix();
+        void ClearMainDigitalMatrix();
+        void ResetMainDigitalMatrix();
         // void CreateTankSpawnGroup(Tank* tank, bool tankPosFixed);        /* Freezed draft functionality*/ // surrounds input tank with walls and adds it to the objects box
         void SpawnGameObject(eTag tag, int index, int seconds);
         void ArrangeGameField();

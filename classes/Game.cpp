@@ -55,7 +55,7 @@ Game::Game(HWND* consoleWindow)
     m_p_MatrixActionRect->right = PMATRIX_WIDTH - PMATRIX_BORDER;
     m_p_MatrixActionRect->bottom = PMATRIX_HEIGHT - PMATRIX_BORDER; 
 
-    ResetPixelMatrix();     // fill pixel matrix with initial values
+    ResetMainDigitalMatrix();     // fill main digital matrix with initial values
     ArrangeGameField();     // arrange game field with game objects
 
     // set bitmap header for game field
@@ -468,19 +468,19 @@ void Game::ArrangeGameField()
 //     }
 // }
 
-void Game::ClearPixelMatrix()
+void Game::ClearMainDigitalMatrix()
 {
     for (int y = 0; y < PMATRIX_HEIGHT; ++y)
     {
         for (int x = 0; x < PMATRIX_WIDTH; ++x)
         {
-            pixelMatrix[y * PMATRIX_WIDTH + x] = Utils::GetColorIndex(Utils::COLOR_BLACK);      
-            // pixelMatrix[y * PMATRIX_WIDTH + x] = 1;      // digit output
+            mainDigitalMatrix[y * PMATRIX_WIDTH + x] = Utils::GetColorIndex(Utils::COLOR_BLACK);      
+            // mainDigitalMatrix[y * PMATRIX_WIDTH + x] = 1;      // digit output
         }
     }
 }
 
-void Game::ResetPixelMatrix()
+void Game::ResetMainDigitalMatrix()
 {
     for (int y = 0; y < PMATRIX_HEIGHT; ++y)
     {
@@ -489,19 +489,19 @@ void Game::ResetPixelMatrix()
             if ((x < PMATRIX_BORDER || x >= PMATRIX_WIDTH - PMATRIX_BORDER) ||
                 (y < PMATRIX_BORDER || (y > DASHBOARD_HEIGHT && y < DASHBOARD_HEIGHT + PMATRIX_BORDER) || y >= PMATRIX_HEIGHT - PMATRIX_BORDER))
             {
-                pixelMatrix[y * PMATRIX_WIDTH + x] = Utils::GetColorIndex(Utils::COLOR_GAINSBORO);      
-                // pixelMatrix[y * PMATRIX_WIDTH + x] = 0;      // digit output
+                mainDigitalMatrix[y * PMATRIX_WIDTH + x] = Utils::GetColorIndex(Utils::COLOR_GAINSBORO);      
+                // mainDigitalMatrix[y * PMATRIX_WIDTH + x] = 0;      // digit output
             }
             else
             {
                 if (y <= DASHBOARD_HEIGHT)
                 {
-                    pixelMatrix[y * PMATRIX_WIDTH + x] = Utils::GetColorIndex(Utils::COLOR_DARKGREY); 
+                    mainDigitalMatrix[y * PMATRIX_WIDTH + x] = Utils::GetColorIndex(Utils::COLOR_DARKGREY); 
                 }
                 else
                 {
-                    pixelMatrix[y * PMATRIX_WIDTH + x] = Utils::GetColorIndex(Utils::COLOR_BLACK);       
-                    // pixelMatrix[y * PMATRIX_WIDTH + x] = 1;       // digit output
+                    mainDigitalMatrix[y * PMATRIX_WIDTH + x] = Utils::GetColorIndex(Utils::COLOR_BLACK);       
+                    // mainDigitalMatrix[y * PMATRIX_WIDTH + x] = 1;       // digit output
                 }
             }
         }
@@ -682,7 +682,7 @@ void Game::RestartGameRound()
     m_objectsBox.Clear();
     m_statusBox.Clear();
 
-    ResetPixelMatrix();
+    ResetMainDigitalMatrix();
     ArrangeGameField();
 }
 
@@ -1321,8 +1321,9 @@ void Game::Logic()
 
 void Game::Draw()
 {
-    ResetPixelMatrix();
+    ResetMainDigitalMatrix();
 
+    // fill the pixel matrix with data of all objects in the objects box (add small matrix of all objects into global matrix)
     BoxItem<GameObject>* p_item = m_objectsBox.GetHead();
     while (p_item != 0)
     {
@@ -1335,7 +1336,7 @@ void Game::Draw()
             int object_x = 0;
             for (int x = pixMatStartX; x < p_item->GetCargo()->GetPatternWidth() + pixMatStartX; ++x)
             {
-                pixelMatrix[y * PMATRIX_WIDTH + x] = (p_item->GetCargo()->GetCurrentPattern())[object_y * p_item->GetCargo()->GetPatternWidth() + object_x];
+                mainDigitalMatrix[y * PMATRIX_WIDTH + x] = (p_item->GetCargo()->GetCurrentPattern())[object_y * p_item->GetCargo()->GetPatternWidth() + object_x];
                 object_x++;
             }
             object_y++;
@@ -1345,13 +1346,13 @@ void Game::Draw()
     }
 
 
-    // // cout pixelMatrix
+    // // cout mainDigitalMatrix
     // system("cls");
     // for (int i = 0; i < PMATRIX_SIZE; ++i)
     // {
     //     for (int j = 0; j < PMATRIX_SIZE; ++j)
     //     {
-    //         cout << pixelMatrix[i * PMATRIX_SIZE + j];
+    //         cout << mainDigitalMatrix[i * PMATRIX_SIZE + j];
     //     }
     //     cout << endl;
     // }
@@ -1363,7 +1364,7 @@ void Game::Draw()
     //     std::string line;
     //     for (int x = 0; x < PMATRIX_SIZE; ++x)
     //     {
-    //         ss << pixelMatrix[y * PMATRIX_SIZE + x];            
+    //         ss << mainDigitalMatrix[y * PMATRIX_SIZE + x];            
     //     }
     //     line = ss.str();
     //     WriteConsoleOutputCharacter(hConsole, line.c_str(), PMATRIX_SIZE, {0,static_cast<SHORT>(y + 0)}, &dwBytesWritten);
@@ -1373,45 +1374,24 @@ void Game::Draw()
     // if game ended then clear pixel matrix before exit
     if (endGame)
     {
-        ClearPixelMatrix();
+        ClearMainDigitalMatrix();
     }
 
-    // set pixel map
+    // set pixel map variables
     int colorIndex;
     COLORREF color;
     int pitch;
     uint8_t* p_row;
 
-    // // arrange pixels for dashboard
-    // pitch = DASHBOARD_WIDTH * BYTES_PER_PIXEL;      // row size in bytes
-    // p_row = (uint8_t*)m_p_dashboardBitmapMemory;
-    // for (int y = 0; y < DASHBOARD_HEIGHT; ++y)
-    // {
-    //     uint32_t* p_pixel = (uint32_t*)p_row;
-    //     for (int x = 0; x < DASHBOARD_WIDTH; ++x)
-    //     {
-    //         colorIndex = m_dashboardPixelMatrix[y * DASHBOARD_WIDTH + x];
-    //         color = Utils::GetColor(colorIndex);
-    //         uint8_t blue = GetBValue(color);
-    //         uint8_t green = GetGValue(color);
-    //         uint8_t red = GetRValue(color);
-    //         uint8_t pixelPadding = 0;
-
-    //         *p_pixel = ((pixelPadding << 24) | (red << 16) | (green << 8) | blue);
-    //         ++p_pixel;
-    //     }
-    //     p_row += pitch;
-    // }
-
     // arrange pixels for game field
     pitch = PMATRIX_WIDTH * BYTES_PER_PIXEL;     // row size in bytes
-    p_row = (uint8_t*)m_p_bitmapMemory;         //cast to uint8 for valid pointer ariphmetic (to add by 1 byte (8 bits) at a time)    
+    p_row = (uint8_t*)m_p_bitmapMemory;         //cast to uint8 for valid pointer arithmetic (to add by 1 byte (8 bits) at a time)    
     for (int y = 0; y < PMATRIX_HEIGHT; ++y)
     {
         uint32_t* p_pixel = (uint32_t*)p_row;
         for (int x = 0; x < PMATRIX_WIDTH; ++x)
         {
-            colorIndex = pixelMatrix[y * PMATRIX_WIDTH + x];
+            colorIndex = mainDigitalMatrix[y * PMATRIX_WIDTH + x];
             color = Utils::GetColor(colorIndex);
             uint8_t blue = GetBValue(color);
             uint8_t green = GetGValue(color);
@@ -1477,43 +1457,18 @@ void Game::Draw()
     // draw to the screen
     deviceContext = GetDC(*m_p_consoleWindow);
 
-    
-
     HFONT hFont; 
     SetTextColor(deviceContext, Utils::COLOR_BLACK);
     SetBkColor(deviceContext, Utils::COLOR_DARKGREY);
-
-    // // screen output for dashboard
-    // StretchDIBits(
-    //             deviceContext,
-    //             DASHBOARD_OFFSET_LEFT,
-    //             DASHBOARD_OFFSET_TOP,
-    //             DASHBOARD_WIDTH,
-    //             DASHBOARD_HEIGHT,
-    //             0,
-    //             0,
-    //             DASHBOARD_WIDTH,
-    //             DASHBOARD_HEIGHT,
-    //             m_p_dashboardBitmapMemory,
-    //             &dashboardBitmapInfo,
-    //             DIB_RGB_COLORS,
-    //             SRCCOPY
-    //             );
-
     
     // screen output for game field
     StretchDIBits(
                 deviceContext,
-                OFFSET_LEFT,
-                OFFSET_TOP,
-                PMATRIX_WIDTH,
-                PMATRIX_HEIGHT,
-                0,
-                0,
-                PMATRIX_WIDTH,
-                PMATRIX_HEIGHT,
-                m_p_bitmapMemory,
-                &bitmapInfo,
+                OFFSET_LEFT, OFFSET_TOP,
+                PMATRIX_WIDTH, PMATRIX_HEIGHT,
+                0, 0,
+                PMATRIX_WIDTH, PMATRIX_HEIGHT,
+                m_p_bitmapMemory, &bitmapInfo,
                 DIB_RGB_COLORS,
                 SRCCOPY
                 );
